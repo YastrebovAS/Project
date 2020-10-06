@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 	/*
 	float minx = 10000, miny = 10000;
 	float maxx = -10000, maxy = -10000;
-	for (int i = 0; i < 20; i += 4)
+	for (int i = 0; i < 21; i++)
 	{
 		if (points[i].x >= maxx)
 			maxx = points[i].x;
@@ -155,16 +155,22 @@ int main(int argc, char **argv)
 		if (points[i].y <= miny)
 			miny = points[i].y;
 	}
-	for (int i = 0; i < 20; i += 4)
+	for (int i = 0; i < 21; i++)
 	{
 			// write coordinates into a file
 			Point2f partA = points[POSE_PAIRS[i][0]] - points[POSE_PAIRS[0][0]];
 			float d2 = sqrt((maxx - minx)*(maxx - minx) + (maxy - miny)*(maxy - miny));
 			points[i].x = points[i].x / d2;
 			points[i].y = points[i].y / d2;
-	}
 
+	if (n == i + 3)
+				{
+					Point2f partA = points[POSE_PAIRS[n][1]] - points[POSE_PAIRS[0][0]];
+					partA.x = partA.x / d2;
+					partA.y = partA.y / d2;
+				}
 
+        }
 	//This opens a sample file and reads it's coordinates
 	float result[5] = { 0 };
 	float minresult = 10000;
