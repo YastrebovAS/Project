@@ -1,4 +1,3 @@
-
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
@@ -28,7 +27,7 @@ int main(int argc, char **argv)
 
 	cout << "USAGE : ./handPoseImage <imageFile> " << endl;
 
-	string imageFile = "B:\\Temp\\Git\\HandDetection\\HandPose\\gesture1.jpg";
+	string imageFile = "B:\\Temp\\Git\\HandDetection\\HandPose\\gesture5.jpg";
 	// Take arguments from command line
 	if (argc == 2)
 	{
@@ -62,7 +61,7 @@ int main(int argc, char **argv)
 	int W = output.size[3];
 
 	// find the position of the body parts
-	vector<Point> points(nPoints);
+	vector<Point2f> points(nPoints);
 	for (int n = 0; n < nPoints; n++)
 	{
 		// Probability map of corresponding body's part.
@@ -74,13 +73,12 @@ int main(int argc, char **argv)
 		minMaxLoc(probMap, 0, &prob, 0, &maxLoc);
 		if (prob > thresh)
 		{
-			circle(frameCopy, cv::Point((int)maxLoc.x, (int)maxLoc.y), 8, Scalar(0, 255, 255), -1);
-			cv::putText(frameCopy, cv::format("%d", n), cv::Point((int)maxLoc.x, (int)maxLoc.y), cv::FONT_HERSHEY_COMPLEX, 1, cv::Scalar(0, 0, 255), 2);
+			circle(frameCopy, Point((float)maxLoc.x, (float)maxLoc.y), 8, Scalar(0, 255, 255), -1);
+			putText(frameCopy, format("%d", n), Point(maxLoc.x, maxLoc.y), FONT_HERSHEY_COMPLEX, 1, Scalar(0, 0, 255), 2);
 
 		}
 		points[n] = maxLoc;
 	}
-	int a = sizeof(POSE_PAIRS);
 
 	int nPairs = sizeof(POSE_PAIRS) / sizeof(POSE_PAIRS[0]);
 
@@ -97,14 +95,14 @@ int main(int argc, char **argv)
 		circle(frame, partA, 8, Scalar(0, 0, 255), -1);
 		circle(frame, partB, 8, Scalar(0, 0, 255), -1);
 	}
-	
+	/*
 	//create a sample from photo
-	FILE *apFile = fopen("B:\\Temp\\Git\\HandDetection\\HandPose\\gesture1.txt", "wt");
+	FILE *apFile = fopen("B:\\Temp\\Git\\HandDetection\\HandPose\\gesture5.txt", "wt");
 	if (apFile != nullptr)
 	{
 		float minx = 10000, miny = 10000;
 		float maxx = -10000, maxy = -10000;
-		for (int i = 0; i < 20; i += 4)
+		for (int i = 0; i < 21; i += 4)
 		{
 			for (int n = i; n < i + 4; n++)
 			{
@@ -119,7 +117,7 @@ int main(int argc, char **argv)
 					miny = partC.y;
 			}
 		}
-		for (int i = 0; i < 20; i += 4)
+		for (int i = 0; i < 21; i += 4)
 		{
 			for (int n = i; n < i + 4; n++)
 			{
@@ -140,11 +138,11 @@ int main(int argc, char **argv)
 		}
 		fclose(apFile);
 	}
+	*/
 	
-	/*
 	float minx = 10000, miny = 10000;
 	float maxx = -10000, maxy = -10000;
-	for (int i = 0; i < 21; i++)
+	for (int i = 0; i < 21; i ++)
 	{
 		if (points[i].x >= maxx)
 			maxx = points[i].x;
@@ -155,28 +153,21 @@ int main(int argc, char **argv)
 		if (points[i].y <= miny)
 			miny = points[i].y;
 	}
-	for (int i = 0; i < 21; i++)
+	for (int i = 0; i < 21; i ++)
 	{
-			// write coordinates into a file
-			Point2f partA = points[POSE_PAIRS[i][0]] - points[POSE_PAIRS[0][0]];
+			// write coordinates into a file;
 			float d2 = sqrt((maxx - minx)*(maxx - minx) + (maxy - miny)*(maxy - miny));
 			points[i].x = points[i].x / d2;
 			points[i].y = points[i].y / d2;
+	}
 
-	if (n == i + 3)
-				{
-					Point2f partA = points[POSE_PAIRS[n][1]] - points[POSE_PAIRS[0][0]];
-					partA.x = partA.x / d2;
-					partA.y = partA.y / d2;
-				}
 
-        }
 	//This opens a sample file and reads it's coordinates
 	float result[5] = { 0 };
 	float minresult = 10000;
+	char aFilename[256];
 	for (int nFile = 1; nFile < 6; nFile++)
 	{
-		char aFilename[256];
 		sprintf(aFilename, "B:\\Temp\\Git\\HandDetection\\HandPose\\gesture%d.txt", nFile);
 		FILE* apFile = fopen(aFilename, "rt");
 		if (apFile != nullptr)
@@ -230,14 +221,14 @@ int main(int argc, char **argv)
 			}
 			fclose(apFile);
 		}
-		for (int n = 0; n < 5; n++)
-		{
-			if (minresult == result[n])
-				cout << aFilename;
-		}
+	}
+	for (int n = 0; n < 5; n++)
+	{
+		if (minresult == result[n])
+			cout << aFilename;
 	}
 
-	*/
+	
  	t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
 	cout << "Time Taken = " << t << endl;
 	imshow("Output-Keypoints", frameCopy);
