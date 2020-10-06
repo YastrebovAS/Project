@@ -1,3 +1,4 @@
+
 #include <opencv2/dnn.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/highgui.hpp>
@@ -102,11 +103,9 @@ int main(int argc, char **argv)
 	{
 		float minx = 10000, miny = 10000;
 		float maxx = -10000, maxy = -10000;
-		for (int i = 0; i < 21; i += 4)
+		for (int i = 0; i < 21; i ++)
 		{
-			for (int n = i; n < i + 4; n++)
-			{
-				Point2f partC = points[POSE_PAIRS[n][0]] - points[POSE_PAIRS[0][0]];
+				Point2f partC = points[i] - points[0];
 				if (partC.x >= maxx)
 					maxx = partC.x;
 				if (partC.y >= maxy)
@@ -115,7 +114,6 @@ int main(int argc, char **argv)
 					minx = partC.x;
 				if (partC.y <= miny)
 					miny = partC.y;
-			}
 		}
 		for (int i = 0; i < 21; i += 4)
 		{
@@ -142,8 +140,10 @@ int main(int argc, char **argv)
 	
 	float minx = 10000, miny = 10000;
 	float maxx = -10000, maxy = -10000;
+	Point2f k = points[0];
 	for (int i = 0; i < 21; i ++)
 	{
+		points[i] = points[i] - k;
 		if (points[i].x >= maxx)
 			maxx = points[i].x;
 		if (points[i].y >= maxy)
@@ -221,13 +221,13 @@ int main(int argc, char **argv)
 			}
 			fclose(apFile);
 		}
-	}
-	for (int n = 0; n < 5; n++)
-	{
-		if (minresult == result[n])
-			cout << aFilename;
-	}
+		for (int n = 0; n < 5; n++)
+		{
+			if (minresult == result[n])
+				cout << aFilename;
+		}
 
+	}
 	
  	t = ((double)cv::getTickCount() - t) / cv::getTickFrequency();
 	cout << "Time Taken = " << t << endl;
